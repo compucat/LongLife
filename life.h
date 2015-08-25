@@ -1,16 +1,25 @@
 //Life library: contains basic life/stabilife tools
 
+#include <stdlib.h>
 
 void drawFrame(void);
-int liveNeighbors(int x, int y, int grid[][], int gridSize);
+int liveNeighbors(int x, int y, int gridSize); //Uses global temp grid
 
+int **tempGrid;
 
-long int simStableLife(int gridSize, int setMemory[], int setNum)
+long int simStableLife(int gridSize, int setMemory[], int setNum, int chunkSize)
 {
 	int i, j;
-	int tempGrid[gridSize][gridSize];
 	
-	for(i=0; i<gridSize; i++) for(j=0; j<gridSize; j++) tempGrid[i, j]=setMemory[chunkSize*chunkSize*4*setNum+chunkSize*2*i+j]; //Copy grid into buffer (setMemory weird addressing copied from main.c)
+	tempGrid=malloc(gridSize*sizeof(int*));
+	//There should be null-pointer checking here, but I'll let the program crash instead-I don't feel like writing tons of for loops right now.
+	for(i=0; i<gridSize; i++)
+	{
+		tempGrid[i]=malloc(gridSize*sizeof(int));
+		//More error checking, again, skipped for the time being.
+	}
+	
+	for(i=0; i<gridSize; i++) for(j=0; j<gridSize; j++) tempGrid[i][j]=setMemory[chunkSize*chunkSize*4*setNum+chunkSize*2*i+j]; //Copy grid into buffer (setMemory weird addressing copied from main.c)
 	
 	int action=0;
 	int gen=1;
@@ -21,7 +30,7 @@ long int simStableLife(int gridSize, int setMemory[], int setNum)
 		if(action>0) action=0;
 		for(i=0; i<gridSize; i++) for(j=0; j<gridSize; j++)
 		{	
-			switch(liveNeighbors(i, j, tempGrid, gridSize))
+			switch(liveNeighbors(i, j, gridSize))
 			{
 				case 0:
 				case 1:
@@ -58,50 +67,50 @@ long int simStableLife(int gridSize, int setMemory[], int setNum)
 	}
 }
 
-int liveNeighbors(int x, int y, int grid[][], int gridSize)
+int liveNeighbors(int x, int y, int gridSize)
 {
 	int count=0;
 	int a, b;
 	
 	a=x-1;
 	b=y-1;
-	if(a<0 || b<0 || a> || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	if(a<0 || b<0 || a> gridSize|| b>gridSize) ;
+	else if(tempGrid[a][b]==1) count++;
 	
 	a=x;
 	b=y-1;
 	if(a<0 || b<0 || a>gridSize || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	else if(tempGrid[a][b]==1) count++;
 	
 	a=x+1;
 	b=y-1;
 	if(a<0 || b<0 || a>gridSize || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	else if(tempGrid[a][b]==1) count++;
 	
 	a=x-1;
 	b=y;
 	if(a<0 || b<0 || a>gridSize || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	else if(tempGrid[a][b]==1) count++;
 	
 	a=x+1;
 	b=y;
 	if(a<0 || b<0 || a>gridSize || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	else if(tempGrid[a][b]==1) count++;
 	
 	a=x-1;
 	b=y+1;
 	if(a<0 || b<0 || a>gridSize || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	else if(tempGrid[a][b]==1) count++;
 	
 	a=x;
 	b=y+1;
 	if(a<0 || b<0 || a>gridSize || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	else if(tempGrid[a][b]==1) count++;
 	
 	a=x+1;
 	b=y+1;
 	if(a<0 || b<0 || a>gridSize || b>gridSize) ;
-	else if(grid[a][b]==1) count++;
+	else if(tempGrid[a][b]==1) count++;
 	
 	return count;
 }
@@ -121,49 +130,3 @@ int liveNeighbors(int x, int y, int grid[][], int gridSize)
 	printf("\nBirths: %d\nDeaths: %d\nGeneration: %d", births, deaths, gen);
 }*/
 
-
-	int count=0;
-	int a, b;
-	
-	a=x-1;
-	b=y-1;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	a=x;
-	b=y-1;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	a=x+1;
-	b=y-1;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	a=x-1;
-	b=y;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	a=x+1;
-	b=y;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	a=x-1;
-	b=y+1;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	a=x;
-	b=y+1;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	a=x+1;
-	b=y+1;
-	if(a<0 || b<0 || a>GRIDSIZE || b>GRIDSIZE) ;
-	else if(grid[a][b]==1) count++;
-	
-	return count;
-}

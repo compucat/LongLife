@@ -26,8 +26,8 @@ main()
 	//A bit wasteful, but I'm being lazy and using an int to store a bit.
 	//These are 1-D dynamic arrays, accessed as 3-D arrays using the macros sets(num, x, y) and chunks(num, x, y).
 	int *setMemory, *chunkMemory;
-	long int setLife[160000][2]; //This holds the lifetime of each set and is used to sort the sets.
-								 //Bank 0 (setLife[][0]) holds the lifetime, bank 1 holds the numbers 0=159999-this is used to eliminate
+	long int setLives[160000][2]; //This holds the lifetime of each set and is used to sort the sets.
+								 //Bank 0 (setLives[][0]) holds the lifetime, bank 1 holds the numbers 0=159999-this is used to eliminate
 								 //the chore of moving large sets around in memory so much by making a pseudo-pointer.
 	
 	
@@ -46,17 +46,17 @@ main()
 		exit(1);
 	}
 	
-	srand(time(null)); //seed pseudoRNG
+	srand(time(NULL)); //seed pseudoRNG
 	for(i=0; i<20; i++) for(j=0; j<chunkSize; j++) for(k=0; k<chunkSize; k++) chunks(i, j, k)=(rand>(RAND_MAX/2)); //Generate 20 random chunks
 	
 	while(chunkSize<targetSize)
 	{
 		
 		generateSets(setMemory, chunkMemory, chunkSize); //Generate 160,000 possible sets
-		for(i=0; i<160000; i++) setLife[i][1]=i; //Set default 1, 2, 3...160000 index order
-		for(i=0; i<160000; i++) setLife[i][0]=simStableLife(setSize, setMemory, i); //Rate the sets
+		for(i=0; i<160000; i++) setLives[i][1]=i; //Set default 1, 2, 3...160000 index order
+		for(i=0; i<160000; i++) setLives[i][0]=simStableLife(setSize, setMemory, i, chunkSize); //Rate the sets
 		
-		sortSetLives(setLife); //Sort the pseudo-pointers by set life length
+		sortSetLives(setLives); //Sort the pseudo-pointers by set life length
 		
 		free(chunkMemory);//Free chunk memory
 		chunkSize=chunkSize*2;
